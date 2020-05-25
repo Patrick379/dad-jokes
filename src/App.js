@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import SearchForm from "./SearchForm";
+import SearchList from "./SearchList";
 
 class App extends React.Component {
 
@@ -43,9 +44,7 @@ class App extends React.Component {
 
     renderJokes() {
         return (
-            <ul className="jokes-list">
-                {this.state.jokes.map(item => <li key={item.id}>{item.joke}</li>)}
-            </ul>
+            <SearchList list={this.state.jokes} />
         );
     }
 
