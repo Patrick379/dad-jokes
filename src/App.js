@@ -1,20 +1,26 @@
 import React from 'react';
 import './App.css';
+import SearchForm from "./SearchForm";
 
 class App extends React.Component {
 
     constructor() {
-      super();
+        super();
 
-      this.state = {
-        joke: null
-      };
+        this.state = {
 
-      this.onTellJoke = this.onTellJoke.bind(this);
+            searchTerm: '',
+            jokes: [],
+            isFetchingJokes: false
+        };
+
+        this.searchJokes = this.searchJokes.bind(this);
+        this.onSearchChange = this.onSearchChange.bind(this);
     }
 
-    onTellJoke() {
-        fetch('https://icanhazdadjoke.com/', {
+    searchJokes(limit = 20) {
+        this.setState({isFetchingJokes: true});
+        fetch(`https://icanhazdadjoke.com/search?term=${this.state.searchTerm}&limit=${limit}`, {
             method: 'GET',
             headers: {
                 Accept: 'application/json'
@@ -22,17 +28,40 @@ class App extends React.Component {
         })
             .then(response => response.json())
             .then(json => {
-                this.setState({ joke: json.joke });
+                const jokes = json.results;
+                this.setState({
+                    jokes,
+                    isFetchingJokes: false
+                });
             });
-    };
+    }
+
+    onSearchChange(value) {
+        this.setState({searchTerm: value});
+    }
+
+
+    renderJokes() {
+        return (
+            <ul className="jokes-list">
+                {this.state.jokes.map(item => <li key={item.id}>{item.joke}</li>)}
+            </ul>
+        );
+    }
 
     render() {
-        console.log('---- RENDER ---');
 
         return (
-            <div>
-                <button onClick={this.onTellJoke}>Tell me a joke</button>
-                <p>{this.state.joke}</p>
+            <div className="App">
+                <img alt="dad joke logo" className="logo" src="/google-dad-jokes-logo.png"/>
+                <SearchForm
+                    onFormSubmit={this.searchJokes}
+                    onSearchValueChange={this.onSearchChange}
+                    isSearching={this.state.isFetchingJokes}
+                    onSingleSearchClick={()=> this.searchJokes(1)}
+                />
+
+                {this.state.isFetchingJokes ? 'Loading joke... ' : this.renderJokes()}
             </div>
         );
     }
