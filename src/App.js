@@ -12,7 +12,8 @@ class App extends React.Component {
 
             searchTerm: '',
             jokes: [],
-            isFetchingJokes: false
+            isFetchingJokes: false,
+            isSearchComplete: false
         };
 
         this.searchJokes = this.searchJokes.bind(this);
@@ -20,7 +21,10 @@ class App extends React.Component {
     }
 
     searchJokes(limit = 20) {
-        this.setState({isFetchingJokes: true});
+        this.setState({
+            isFetchingJokes: true,
+            isSearchComplete: false
+        });
         fetch(`https://icanhazdadjoke.com/search?term=${this.state.searchTerm}&limit=${limit}`, {
             method: 'GET',
             headers: {
@@ -32,7 +36,8 @@ class App extends React.Component {
                 const jokes = json.results;
                 this.setState({
                     jokes,
-                    isFetchingJokes: false
+                    isFetchingJokes: false,
+                    isSearchComplete: true
                 });
             });
     }
@@ -44,7 +49,10 @@ class App extends React.Component {
 
     renderJokes() {
         return (
-            <SearchList list={this.state.jokes} />
+            <SearchList
+                list={this.state.jokes}
+                searchComplete={this.state.isSearchComplete}
+            />
         );
     }
 
@@ -57,7 +65,10 @@ class App extends React.Component {
                     onFormSubmit={this.searchJokes}
                     onSearchValueChange={this.onSearchChange}
                     isSearching={this.state.isFetchingJokes}
+                    clearResults={()=> this.setState({jokes: [],isSearchComplete: false})}
+                    clearSearchTerm={()=> this.setState({searchTerm: ''})}
                     onSingleSearchClick={()=> this.searchJokes(1)}
+                    term={this.state.searchTerm}
                 />
 
                 {this.state.isFetchingJokes ? 'Loading joke... ' : this.renderJokes()}
