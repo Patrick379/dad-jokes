@@ -44,9 +44,7 @@ class SearchForm extends React.Component {
                         return <option key={index + 1} value={index + 1}>{index + 1}</option>
                     })}
                 </select>
-                {/*
-        TODO 5. BONUS: update search input so results update as you type.
-        */}
+                {/* TODO 5. BONUS: update search input so results update as you type. */}
                 <button disabled={this.props.isSearching}>Search</button>
                 <button onClick={this.props.onSingleSearchClick} disabled={this.props.isSearching}>I'm feeling funny
                 </button>
